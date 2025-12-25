@@ -1,0 +1,709 @@
+{
+  "name": "Sharif Pages",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "banglakobi",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -352,
+        1696
+      ],
+      "id": "d40df687-06ae-48df-8846-a88a43eaa35e",
+      "name": "Webhook",
+      "webhookId": "fbaa8b85-29c5-44ee-9625-de9759070e4a"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        128,
+        1216
+      ],
+      "id": "46a012b5-2059-4acb-a7f3-6b60d16bfe3e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User message: {{$json.message}}\n",
+        "options": {
+          "systemMessage": "You are a friendly, funny Bangladeshi Bangla chat assistant.\nYour vibe: বন্ধুর মতো—হালকা মজা, স্মার্ট রসিকতা, ভদ্র ও সম্মানজনক।\nDo NOT claim to be a human; be clear you are an AI when relevant.\n\nLanguage & respect:\n- Reply in natural Bangladeshi Bangla.\n- Default address: “তুমি”.\n- You MAY use “আপনি” for elders/formal users or if the user uses “আপনি”.\n- NEVER use “তুই”.\n- No insulting, mocking, or degrading language.\n\nRomance handling (allowed but bounded):\n- If the user wants to talk about romance/feelings/relationships, you can chat supportively and respectfully.\n- Do NOT do romantic/flirty roleplay, do NOT act like a boyfriend/girlfriend, do NOT use intimate pet-names (e.g., জান/বেবি), and do NOT claim exclusivity or “I love you”.\n- Keep it PG and respectful; no sexual or explicit content.\n- If the user pushes for intimate/romantic roleplay, gently set a boundary and steer to wholesome conversation or relationship advice.\n\nHandoff rule (NO Telegram forwarding):\nIf the user wants to talk to a human / Sharif / admin, OR asks personal questions about the assistant/operator,\ndo NOT continue chatting or answer the question.\nInstead, reply with exactly this SINGLE LINE (no emojis):\n\"অপেক্ষা করুন—শরীফ ফ্রি হলে আপনার প্রশ্নের উত্তর দিবে।\"\n\nHandoff triggers (examples, not limited):\n- Wants a real human: \"মানুষ\", \"হিউম্যান\", \"রিয়েল পারসন\", \"লাইভ কথা\", \"সরাসরি কথা\"\n- Wants Sharif/Owner/Admin: \"শরীফ\", \"Sharif\", \"owner\", \"admin\", \"ম্যানেজার\", \"এডমিন\"\n- Personal questions about assistant/operator: আসল নাম, বয়স, ঠিকানা, লোকেশন, নম্বর/Whatsapp, সম্পর্ক, পরিচয়, ব্যক্তিগত তথ্য\n\nNormal reply rules (when NOT a handoff trigger):\n- Exactly ONE single-line message, 6–12 words only.\n- No emojis. No generic advice. Do not send multiple messages.\n- Ask at most ONE short question only if truly needed.\n- Friendly + funny tone (light joke OK), but stay respectful.\n- Respond directly to the user's message.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1312,
+        1360
+      ],
+      "id": "c0f846e5-3a49-48cd-9523-d8abd0eb2327",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "{{ $json.body.entry[0].messaging[0].sender.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        1632
+      ],
+      "id": "b30aa8b7-9535-4be0-b943-26bb1bafb864",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $('Edit Fields').item.json.receiver_id }}/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "=EAATfwQhRK6ABQZAiyszEXbgKG5MJN95L9pmvp4cwr63BwnsMNZA9NAYAgWwEly4GBXRxXEPWUI961vDTitspbrusAEJO3Dco0KpIXYICzfKXQoLAMVJZArPJscIODXZC4OyBRdbjowPkEkEXPk6ysiBYpTAiLfzhApJUAjzHSbtciLdiKguJDOKYsJlEPSRZC3ZAZAGmZCZBquB0PBkQF8r6qjU0R"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $('Edit Fields').item.json.senser_id }}\"\n  },\n  \"messaging_type\": \"RESPONSE\",\n  \"message\": {\n   \"text\": {{ JSON.stringify($json.output) }}\n\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1664,
+        1360
+      ],
+      "id": "738b193e-7782-4c6e-97f3-b1053bced355",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1db88757-20d0-4e5f-ade0-914d4fd5f94b",
+              "name": "senser_id",
+              "value": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "865dd10b-4bdc-494d-8013-ed2a7f6ec8b1",
+              "name": "receiver_id",
+              "value": "={{ $json.body.entry[0].messaging[0].recipient.id }}",
+              "type": "string"
+            },
+            {
+              "id": "20603dd9-cd61-452d-9b98-c47ae81a9cae",
+              "name": "message",
+              "value": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        1360
+      ],
+      "id": "21fb0f33-4f29-4989-b461-a48b90145f0a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "EVENT_RECEIVED",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        1824
+      ],
+      "id": "4ef15f0b-2d2e-4794-b0ac-cd1d4211a219",
+      "name": "ACK (POST)"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        1632
+      ],
+      "id": "2cc9aac0-ac9c-460b-b76c-617639902574",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "d6EkELpKv8vG2tiJ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "030b3f6e-f8ad-41af-ac85-5837081529e8",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        1360
+      ],
+      "id": "1034e7a0-b667-4638-a5a1-c8059705f3cd",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"message_type\": \"normal\",\n  \"reply\": \"\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        2160
+      ],
+      "id": "c8a1e854-fc95-4f8c-a52a-748a0f342030",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "948e65dd-fc80-4057-960f-bba327d27f33",
+              "leftValue": "={{ $json.output.message_type }}",
+              "rightValue": "normal",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        1920
+      ],
+      "id": "72eca18d-9c1e-45ce-9ed2-b7f984f8baa4",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Facebook Comment: {{ $json.body.entry[0].changes[0].value.message }}\nReturn JSON with message_type + reply.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI comment-reply assistant for a business.\nYour task: read a Facebook comment and decide whether it is NORMAL or NEGATIVE, then generate a short reply.\n\nOutput MUST be valid JSON only (no extra text), matching this schema:\n{\n  \"message_type\": \"normal\" | \"negative\",\n  \"reply\": \"...\"\n}\n\nRules:\n- If the comment is positive, neutral, or general -> message_type = \"normal\"\n- If the comment contains insults, complaints, hateful/harmful statements about our service -> message_type = \"negative\"\n- reply must be short and simple (1-2 sentences)\n- No emojis, no special characters\n- Use polite Bangla (Bangladesh), natural tone\n- Do NOT include quotes around the whole reply other than JSON string escaping\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        512,
+        1920
+      ],
+      "id": "6587c55c-322a-4e8e-a68a-d5e31ffef369",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        2160
+      ],
+      "id": "29cc16ed-e0b1-4638-8420-bd33666b79c4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "d6EkELpKv8vG2tiJ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Works in n8n Code node (Run Once for All Items)\n\n// Get all incoming items\nconst items = $input.all();\n\nfor (const item of items) {\n  const body = item.json.body ?? {};\n  const entry = body.entry?.[0] ?? {};\n\n  const messaging0 = entry?.messaging?.[0] ?? {};\n  const change0 = entry?.changes?.[0] ?? {};\n  const value0 = change0?.value ?? {};\n\n  const isMessage = !!messaging0?.message?.mid; // reliable for Messenger message event\n  const isComment = value0?.item === 'comment' && value0?.verb === 'add'; // reliable for new feed comment\n\n  item.json.eventType = isMessage ? 'message' : (isComment ? 'comment' : 'other');\n\n  // Normalized fields (optional)\n  item.json.normalized = {\n    messageMid: messaging0?.message?.mid ?? '',\n    messageText: messaging0?.message?.text ?? '',\n    senderId: messaging0?.sender?.id ?? '',\n    receiverId: messaging0?.recipient?.id ?? '',\n\n    pageId: entry?.id ?? '',\n    commenterId: value0?.from?.id ?? '',\n\n    commentId: value0?.comment_id ?? '',\n    commentText: value0?.message ?? '',\n    commenterName: value0?.from?.name ?? '',\n    postUrl: value0?.post?.permalink_url ?? '',\n  };\n}\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1408
+      ],
+      "id": "d6a6f6d3-9420-41d1-90dc-d0e041781a88",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.eventType }}",
+                    "rightValue": "message",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "761344e2-7ddf-40b3-ba1c-b15aa0612679"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bda72f7b-a5da-41f1-8c81-c959c20fa444",
+                    "leftValue": "={{ $json.eventType }}",
+                    "rightValue": "comment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        1408
+      ],
+      "id": "1d1a5014-6ffc-4b4a-bc4c-939eaafbcbf9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $('If - Skip Own Comments').item.json.body.entry[0].changes[0].value.comment_id }}/comments",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "=EAATfwQhRK6ABQZAiyszEXbgKG5MJN95L9pmvp4cwr63BwnsMNZA9NAYAgWwEly4GBXRxXEPWUI961vDTitspbrusAEJO3Dco0KpIXYICzfKXQoLAMVJZArPJscIODXZC4OyBRdbjowPkEkEXPk6ysiBYpTAiLfzhApJUAjzHSbtciLdiKguJDOKYsJlEPSRZC3ZAZAGmZCZBquB0PBkQF8r6qjU0R"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.output.reply }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1184,
+        1840
+      ],
+      "id": "8241fde9-3b24-4b4e-aadc-07f7ae2cac5c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://graph.facebook.com/v24.0/{{ $('If - Skip Own Comments').item.json.body.entry[0].changes[0].value.comment_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "=EAATfwQhRK6ABQZAiyszEXbgKG5MJN95L9pmvp4cwr63BwnsMNZA9NAYAgWwEly4GBXRxXEPWUI961vDTitspbrusAEJO3Dco0KpIXYICzfKXQoLAMVJZArPJscIODXZC4OyBRdbjowPkEkEXPk6ysiBYpTAiLfzhApJUAjzHSbtciLdiKguJDOKYsJlEPSRZC3ZAZAGmZCZBquB0PBkQF8r6qjU0R"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1168,
+        2064
+      ],
+      "id": "db38454a-ddd7-4244-8c23-80ecbf45a5fc",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "90e01a2b-cd6a-404c-8bc8-52a5cd89acf4",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        1920
+      ],
+      "id": "1423f61c-66d9-4bd8-ae7d-10939e6c6e9f",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1e5d1244-1bd7-452a-909d-dfb346ae642b",
+              "leftValue": "={{ $json.normalized.commenterId }}",
+              "rightValue": "={{ $json.normalized.pageId }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "94598022-7f4a-488e-98fd-8c0933cff3f2",
+              "leftValue": "={{ $json.normalized.commenterName }}",
+              "rightValue": "Sharif Pages",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        1744
+      ],
+      "id": "f3866d8f-842b-48f6-a717-fa3d13b4ea4a",
+      "name": "If - Skip Own Comments"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ACK (POST)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If - Skip Own Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Skip Own Comments": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8cfd1df8-e510-4d2b-8774-113c63a1fb3a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "836bc5cab325bd5fe21f4dca7c8bee7b3cb1b1502568093d4f78e89a00013135"
+  },
+  "id": "wVV9e7YDLIqD0yU6",
+  "tags": []
+}
