@@ -1,4 +1,5 @@
 # Facebook Page Auto Moderator & Messenger Auto-Reply (n8n)
+![Workflow Screenshot](screenshot.jpg)
 
 This repository contains an **n8n workflow** that automates moderation and engagement for a **Facebook Page** using **Meta Webhooks + Graph API**.
 
