@@ -109,10 +109,10 @@ You can customize:
   - Check n8n execution logs for Graph API errors
 
 ## Credits
-Created by **Sharif**
+Created by **Sharif Ahammed**
 
 - 🐙 GitHub: [nuxrif](https://github.com/nuxrif/)
-- 📘 Facebook: [nuxrif](https://www.facebook.com/nuxrif)
+- 📘 Facebook: [Sharif Ahammed (nuxrif)](https://www.facebook.com/nuxrif)
 - ✉️ Email: [sa.mollick@gmail.com](mailto:sa.mollick@gmail.com)
 - 📞 Phone: [+8801717361064](tel:+8801717361064)
 - 💬 WhatsApp: [Chat on WhatsApp](https://wa.me/8801717361064)
